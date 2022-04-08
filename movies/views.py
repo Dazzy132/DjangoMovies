@@ -31,6 +31,10 @@ class AddReview(View):
         if form.is_valid():
             form = form.save(commit=False)
             # Приостановка сохранения формы для вноса изменений
+            if request.POST.get('parent', None):
+                # В пост запросе ищем ключ parent - имя нашего поля. Если оно будет - выполнит код ниже. None - ничего не выполнит
+                form.parent_id = int(request.POST.get('parent'))
+                # Так как мы добавляем число, а не объект, то parent_id. Достаем значение, так как оно строковое изначально, обарачиваем в int
             form.movie = movie
             # Присваиваем форме объект и сохраняем его
             form.save()

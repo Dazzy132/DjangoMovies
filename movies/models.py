@@ -80,6 +80,10 @@ class Movie(models.Model):
         return reverse('movie_detail', kwargs={'slug': self.url})
     # 'slug' - ключ который запрашиваем в urls.py ( <slug: ) , а self.url - то, что передаем по этому пути
 
+    def get_review(self):
+        return self.reviews_set.filter(parent__isnull=True)
+    # Возвращает список отзывов прикрепленных к фильму, фильтруя там где поле parent = Null
+    # Оставляет обычные отзывы, комментарии к ним не выводит.
 
     class Meta:
         verbose_name = 'Фильм'

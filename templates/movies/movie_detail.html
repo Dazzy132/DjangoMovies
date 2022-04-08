@@ -142,14 +142,15 @@
                 <div class="contact-single">
                     <h3 class="editContent" style="outline: none; cursor: inherit;">
                                     <span class="sub-tittle editContent"
-                                          style="outline: none; cursor: inherit;">02</span>Оставить
+                                          style="outline: none; cursor: inherit;">{{ movie.reviews_set.count }}</span>Оставить
                         отзыв</h3>
-                    <form action="{% url 'add_review' movie.id %}" method="post" class="mt-4">
-                         {% comment %}
-                            {% url 'add review' - ссылка на путь urls.py , и передаем id фильма %}
-                            Метод отправки формы - post
-                         {% endcomment %}
+                    <form action="{% url 'add_review' movie.id %}" method="post" class="mt-4" id="formReview">
+                        {% comment %} {% url 'add review' - ссылка на путь urls.py , и передаем id фильма %}
+                         Метод отправки формы - post,
+                         JS | id = formReview - ссылка на форму      {% endcomment %}
                         {% csrf_token %}
+                        <input type="hidden" name="parent" id="contactparent" value="">
+                        {% comment %} Поле ввода для ответа на комментарии. {% endcomment %}
                         <div class="form-group editContent">
                             <label for="contactcomment" class="editContent">
                                 Ваш комментарий *
@@ -183,8 +184,8 @@
                 <!--  //contact form grid ends here -->
             </div>
         </div>
-    {% comment %} Выводим отзывы относящиеся к фильму через связь movie.reviews_set.all {% endcomment %}
-        {% for review in movie.reviews_set.all %}
+        {% comment %} Выводим отзывы относящиеся к фильму через связь movie.reviews_set.all {% endcomment %}
+        {% for review in movie.get_review %}
             <div class="media py-5">
                 <img src="{% static 'images/te2.jpg' %}" class="mr-3 img-fluid" alt="image">
                 <div class="media-body mt-4">
@@ -194,25 +195,34 @@
                     <p class="mt-2 editContent">
                         {{ review.text }}
                     </p>
-                    {#                    <div class="media mt-5 editContent"#}
-                    {#                         style="outline: none; cursor: inherit;">#}
-                    {#                        <a class="pr-3" href="#">#}
-                    {#                            <img src="bundles/images/te1.jpg" class="img-fluid " alt="image">#}
-                    {#                        </a>#}
-                    {#                        <div class="media-body">#}
-                    {#                            <h5 class="mt-0 editContent"#}
-                    {#                                style="outline: none; cursor: inherit;">Leia Organa</h5>#}
-                    {#                            <p class="mt-2 editContent"#}
-                    {#                               style="outline: none; cursor: inherit;"> Cras sit amet#}
-                    {#                                nibh libero, in gravida nulla. Nulla vel metus#}
-                    {#                                scelerisque ante sollicitudin. Cras purus odio,#}
-                    {#                                vestibulum in vulputate at, tempus viverra turpis. Fusce#}
-                    {#                                condimentum nunc ac nisi vulputate fringilla..</p>#}
-                    {#                        </div>#}
-                    {#                    </div>#}
+                    <a href="#formReview" onclick="addReview('{{ review.name }}', '{{ review.id }}')">Ответить</a>
+                    {% comment %} Оставить отзыв на отзыв
+                    #formReview - ссылка на форму,
+                    onclick="AddReview" - при нажатии передается имя Автора сообщения и его ID в скрипт addReview{% endcomment %}
+                    {% for rev in review.reviews_set.all %}
+                    {# Получаем все отзывы, завязанные на нашем отзове. И выводим их #}
+                        <div class="media mt-5 editContent">
+                            <a class="pr-3" href="#">
+                                <img src="{% static 'images/te2.jpg' %}" class="img-fluid " alt="image">
+                            </a>
+                            <div class="media-body">
+                                <h5 class="mt-0 editContent">{{ rev.name }}</h5>
+                                <p class="mt-2 editContent">{{ rev.text }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         {% endfor %}
     </div>
     </div>
+    <script>
+        function addReview(name, id) {
+            document.getElementById("contactparent").value = id;
+            document.getElementById("contactcomment").innerText = `${name}, `
+        }
+    {# ID будет подставляться в значение поля parent - <input type="hidden" name="parent" id="contactparrent" value=""> #}
+    {# А имя пользователя - с нашего поля - сообщения textarea  #}
+    </script>
+
 {% endblock movie %}
