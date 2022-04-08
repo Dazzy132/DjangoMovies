@@ -877,6 +877,10 @@ ul.w3layouts-box-list li {
 
 .desc1-left {
     border: 1px solid #ddd;
+    Padding: 10px;
+    text-align: center;
+}
+
 }
 
 .desc1-right h3 {
