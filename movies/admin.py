@@ -8,6 +8,7 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 class MovieAdminForm(forms.ModelForm):
     description = forms.CharField(label='Описание', widget=CKEditorUploadingWidget())
+
     # Поле из Movie, для которого будет применен CKEditor
     # Чтобы подключить - для нужной таблицы - form = MovieAdminForm
 
@@ -25,7 +26,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 #
-class ReviewInline(admin.TabularInline):   # admin.StackedInline
+class ReviewInline(admin.TabularInline):  # admin.StackedInline
     """Отзывы на странице фильма"""
     model = Reviews
     # Модель, которая используется
@@ -89,10 +90,11 @@ class MovieAdmin(admin.ModelAdmin):
             "fields": (("url", "draft"),)
         }),
     )
-# Для того чтобы сделать поля в одну строку можно использовать field = (('test1', 'test2', 'test3'),)
-# Подходит для того, чтобы убрать из формы какие-то поля. Или указать те поля, которые хотим видеть
-# Более правильный вариант группировки полей - fieldsets:
-# Указываем кортеж, который будет содержать кортежи, которые будут содержать словарь, где указываем ключ fields и кортеж тех полей, которые используем
+
+    # Для того чтобы сделать поля в одну строку можно использовать field = (('test1', 'test2', 'test3'),)
+    # Подходит для того, чтобы убрать из формы какие-то поля. Или указать те поля, которые хотим видеть
+    # Более правильный вариант группировки полей - fieldsets:
+    # Указываем кортеж, который будет содержать кортежи, которые будут содержать словарь, где указываем ключ fields и кортеж тех полей, которые используем
 
     def get_image(self, obj):
         return mark_safe(f'<img src={obj.poster.url} width="100" height="110"')
@@ -107,6 +109,7 @@ class MovieAdmin(admin.ModelAdmin):
         else:
             message_bit = f'{row_update} записей были обновлены'
         self.message_user(request, f'{message_bit}')
+
     # Передает сообщение в административную панель.
 
     def publish(self, request, queryset):
@@ -148,10 +151,12 @@ class ActorAdmin(admin.ModelAdmin):
     """Актеры"""
     list_display = ("name", "age", 'get_image')
     readonly_fields = ('get_image',)
+
     # Для вывода фотографии в полной записи
 
     def get_image(self, obj):
         return mark_safe(f'<img src={obj.image.url} width="50" height="60"')
+
     # Выводить фотографию как хтмл строку
 
     get_image.short_description = 'Изображение'
@@ -173,7 +178,6 @@ class MovieShotsAdmin(admin.ModelAdmin):
         return mark_safe(f'<img src={obj.image.url} width="50" height="60"')
 
     get_image.short_description = 'Изображение'
-
 
 
 admin.site.site_title = 'Django Movies'

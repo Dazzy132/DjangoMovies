@@ -1,17 +1,20 @@
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
 
 from .models import *
-from .forms import ReviewsForm
+from .forms import ReviewsForm, RatingForm
 
 
 # Похож на метод get_context_data(). Передает свои данные в другие классы
 class GenreYear:
     """Жанры и года выхода фильмов"""
+
     def get_genres(self):
         return Genre.objects.all()
+
     # Получение всех жанров
 
     def get_years(self):
@@ -32,7 +35,14 @@ class MovieDetailView(GenreYear, DetailView):
     """Полное описание фильма"""
     model = Movie
     slug_field = "url"
+
     # slug_field - Поле по которому нужно будет искать запись. "url" - поле в модели Movie
+
+    # Получение формы рейтинга
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['star_form'] = RatingForm()
+        return context
 
     # def get_context_data(self, *, object_list=None, **kwargs):
     #     context = super().get_context_data(**kwargs)
@@ -40,10 +50,13 @@ class MovieDetailView(GenreYear, DetailView):
     #     context['categories'] = Category.objects.all()
     #     # Добавляем ключ categories и передаем в него все объекты модели Category
     #     return context
+
+
 # Вывод списка категорий (такой способ или с помощью темплейт тегов
 
 class AddReview(View):
     """Отзывы"""
+
     def post(self, request, pk):
         # Пост запрос HTTP | request - запрос, pk - id фильма
         form = ReviewsForm(request.POST)
@@ -88,8 +101,38 @@ class FilterMoviesView(GenreYear, ListView):
         return queryset
 
 
+class AddStarRating(View):
+    """Добавление рейтинга фильму"""
 
+    def get_client_ip(self, request):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
 
+    def post(self, request):
+        # Когда придет пост запрос - за это отвечает подфункция post
+        form = RatingForm(request.POST)
+        # В form передаем request.POST
+        if form.is_valid():
+            # Проверяем на валидность
+            Rating.objects.update_or_create(
+                # update_or_create - Позволяет обновить или создать запись
+                ip=self.get_client_ip(request),
+                # ip = Через функцию get_client_ip получаем IP пользователя отправившего запрос
+                movie_id=int(request.POST.get("movie")),
+                # movie_id = Строковое значение, полученное из запроса. Оборачиваем в int(). Данные приходят со скрытого поля movie
+                defaults={'star_id': int(request.POST.get("star"))}
+                # В defaults передается словарь{'ключ поля которое нужно изменить': значение, на которое меняем
+            )
+            # Чтобы не создавались новые записи рейтинга, когда пользователь переставляет её, идет изменение текущей.
+            # Пользователь так же не имеет более одной на один фильм
+            return HttpResponse(status=201)
+        # При успешном вернется статус 201, если нет - 400
+        else:
+            return HttpResponse(status=400)
 
     # def get_queryset(self):
     #     queryset = Movie.objects.filter(
@@ -99,15 +142,11 @@ class FilterMoviesView(GenreYear, ListView):
     #     # C помощью метода Q можно будет запрашивать или года или жанры. (ИЛИ - | )
     #     return queryset
 
-
-        # queryset = Movie.objects.filter(
-        #     year__in=self.request.GET.getlist('year'), genres__in=self.request.GET.getlist('genre')
-        # )
-        # Чтобы совпадал и год и жанр
-
-
+    # queryset = Movie.objects.filter(
+    #     year__in=self.request.GET.getlist('year'), genres__in=self.request.GET.getlist('genre')
+    # )
+    # Чтобы совпадал и год и жанр
 
 # Фильтруем фильмы, где года будут входить в список, который будет возвращаться с фронтенда.
 # Фильтрация равна запросу, с помощью метода GET, достается с помощью getlist(поле которое получаем)
 # Чтобы применить фильтрацию, нужно будет обернуть поле в форму и вызвать метод get
-

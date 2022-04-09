@@ -113,11 +113,15 @@ class RatingStar(models.Model):
     value = models.PositiveSmallIntegerField(default=0, verbose_name='Значение')
 
     def __str__(self):
-        return self.value
+        return f'{self.value}'
+    # Чтобы добавлять звезды рейтинга, нужно передать её как строку
 
     class Meta:
         verbose_name = 'Звезда рейтинга'
         verbose_name_plural = 'Звезды рейтинга'
+        ordering = ['value']
+        # Отображение звезд в нужном порядке
+
 
 
 class Rating(models.Model):
