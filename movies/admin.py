@@ -1,7 +1,19 @@
+from django import forms
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import *
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+
+
+class MovieAdminForm(forms.ModelForm):
+    description = forms.CharField(label='Описание', widget=CKEditorUploadingWidget())
+    # Поле из Movie, для которого будет применен CKEditor
+    # Чтобы подключить - для нужной таблицы - form = MovieAdminForm
+
+    class Meta:
+        model = Movie
+        fields = '__all__'
 
 
 @admin.register(Category)
@@ -47,6 +59,8 @@ class MovieAdmin(admin.ModelAdmin):
     save_as = True
     # Для создания дублей информации. Удобно для создания множества объектов
     list_editable = ("draft",)
+    form = MovieAdminForm
+    # Подключение CKEditor
     readonly_fields = ("get_image",)
     fieldsets = (
         # Объединение полей в одну строчку
