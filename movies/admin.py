@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
+
 from .models import *
 
 
@@ -19,6 +21,17 @@ class ReviewInline(admin.TabularInline):   # admin.StackedInline
     readonly_fields = ("name", "email")
 
 
+class MovieShotsInline(admin.TabularInline):
+    model = MovieShots
+    extra = 1
+    readonly_fields = ('get_image',)
+
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url} width="100" height="110"')
+
+    get_image.short_description = 'Изображение'
+
+
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
     """Фильмы"""
@@ -28,20 +41,21 @@ class MovieAdmin(admin.ModelAdmin):
     # Делать поле url на основе поля title. Автозаполнение
     search_fields = ("title", "category__name")
     # Поиск по имени категории, через обращение к БД
-    inlines = [ReviewInline]
+    inlines = [MovieShotsInline, ReviewInline]
     # inlines - Для MTM FRK. Прикрепление классов к таблице
     save_on_top = True
     save_as = True
     # Для создания дублей информации. Удобно для создания множества объектов
     list_editable = ("draft",)
+    readonly_fields = ("get_image",)
     fieldsets = (
         # Объединение полей в одну строчку
         (None, {
             "fields": (("title", "tagline"),)
         }),
-        # Создание группы полей. Без объединения в одну строчку
+        # Создание группы полей. Без объединения в одну строчку "fields": (test1, test2)
         (None, {
-            "fields": ("description", "poster")
+            "fields": ("description", ("poster", "get_image"))
         }),
         (None, {
             "fields": (("year", "world_premiere", "country"),)
@@ -63,6 +77,11 @@ class MovieAdmin(admin.ModelAdmin):
 # Более правильный вариант группировки полей - fieldsets:
 # Указываем кортеж, который будет содержать кортежи, которые будут содержать словарь, где указываем ключ fields и кортеж тех полей, которые используем
 
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.poster.url} width="100" height="110"')
+
+    get_image.short_description = 'Постер'
+
 
 @admin.register(Reviews)
 class ReviewAdmin(admin.ModelAdmin):
@@ -82,7 +101,15 @@ class GenreAdmin(admin.ModelAdmin):
 @admin.register(Actor)
 class ActorAdmin(admin.ModelAdmin):
     """Актеры"""
-    list_display = ("name", "age")
+    list_display = ("name", "age", 'get_image')
+    readonly_fields = ('get_image',)
+    # Для вывода фотографии в полной записи
+
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url} width="50" height="60"')
+    # Выводить фотографию как хтмл строку
+
+    get_image.short_description = 'Изображение'
 
 
 @admin.register(Rating)
@@ -94,7 +121,17 @@ class RatingAdmin(admin.ModelAdmin):
 @admin.register(MovieShots)
 class MovieShotsAdmin(admin.ModelAdmin):
     """Кадры из фильма"""
-    list_display = ("title", "movie")
+    list_display = ("title", "movie", "get_image")
+    readonly_fields = ('get_image',)
 
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url} width="50" height="60"')
+
+    get_image.short_description = 'Изображение'
+
+
+
+admin.site.site_title = 'Django Movies'
+admin.site.site_header = 'Django Movies'
 
 admin.site.register(RatingStar)
