@@ -46,3 +46,12 @@ class AddReview(View):
             # Присваиваем форме объект и сохраняем его
             form.save()
         return redirect(movie.get_absolute_url())
+
+
+class ActorView(DetailView):
+    """Вывод информации об актере"""
+    model = Actor
+    template_name = 'movies/actor.html'
+    slug_field = 'name'
+    # Поле по которому искать актеров - slug_field
+
