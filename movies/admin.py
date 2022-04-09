@@ -62,6 +62,8 @@ class MovieAdmin(admin.ModelAdmin):
     form = MovieAdminForm
     # Подключение CKEditor
     readonly_fields = ("get_image",)
+    actions = ["publish", "unpublish"]
+    # Регистрация actions
     fieldsets = (
         # Объединение полей в одну строчку
         (None, {
@@ -93,6 +95,34 @@ class MovieAdmin(admin.ModelAdmin):
 
     def get_image(self, obj):
         return mark_safe(f'<img src={obj.poster.url} width="100" height="110"')
+
+    # Передаем запрос и объект модели queryset
+    def unpublish(self, request, queryset):
+        """Снять с публикации"""
+        row_update = queryset.update(draft=True)
+        # Обновляем поле draft и ставим его в True и проверяем сколько записей было обновлено. Одна или несколько
+        if row_update == 1:
+            message_bit = '1 запись была обновлена'
+        else:
+            message_bit = f'{row_update} записей были обновлены'
+        self.message_user(request, f'{message_bit}')
+    # Передает сообщение в административную панель.
+
+    def publish(self, request, queryset):
+        """Опубликовать"""
+        row_update = queryset.update(draft=False)
+        if row_update == 1:
+            message_bit = '1 запись была обновлена'
+        else:
+            message_bit = f'{row_update} записей были обновлены'
+        self.message_user(request, f'{message_bit}')
+
+    publish.short_description = "Опубликовать"
+    publish.allowed_permission = ('change',)
+    # Чтобы применять эту функцию, у пользователя должны быть права на изменения.
+
+    unpublish.short_description = "Снять с публикации"
+    unpublish.allowed_permission = ('change',)
 
     get_image.short_description = 'Постер'
 
