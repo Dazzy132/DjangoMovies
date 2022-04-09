@@ -13,12 +13,19 @@ class MoviesView(ListView):
     # template_name можно не указывать если писать шаблоны (Название модели_list) или detail. Зависит от класса
     # context_object_name не указывается, потому что обращение в шаблонах идет непосредственно к имени модели - movie.
 
-
 class MovieDetailView(DetailView):
     """Полное описание фильма"""
     model = Movie
     slug_field = "url"
     # slug_field - Поле по которому нужно будет искать запись. "url" - поле в модели Movie
+
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     # С помощью родителя получаем в переменную context - словарь (**kwargs) обязательно
+    #     context['categories'] = Category.objects.all()
+    #     # Добавляем ключ categories и передаем в него все объекты модели Category
+    #     return context
+# Вывод списка категорий (такой способ или с помощью темплейт тегов
 
 class AddReview(View):
     """Отзывы"""
