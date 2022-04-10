@@ -1,7 +1,8 @@
 {% load movie_tag %}
 <div class="search-bar w3layouts-newsletter">
     <h3 class="sear-head editContent">Поиск фильма</h3>
-    <form action="#" method="post" class="d-flex editContent">
+    {% comment %} В form action='#' добавляем url, чтобы работала форма отправки и метод должен быть get, потому что получаем данные {% endcomment %}
+    <form action="{% url 'search' %}" method="get" class="d-flex editContent">
         {% comment %} Поле поиска называется q, тип кнопки - submit {% endcomment %}
         <input type="search" placeholder="Введите название..." name="q" class="form-control" required="">
         <button type="submit" class="btn1 btn">

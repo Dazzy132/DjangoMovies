@@ -166,3 +166,20 @@ class AddStarRating(View):
 # Фильтруем фильмы, где года будут входить в список, который будет возвращаться с фронтенда.
 # Фильтрация равна запросу, с помощью метода GET, достается с помощью getlist(поле которое получаем)
 # Чтобы применить фильтрацию, нужно будет обернуть поле в форму и вызвать метод get
+
+
+class Search(ListView):
+    """Поиск фильма"""
+    paginate_by = 2
+
+    def get_queryset(self):
+        return Movie.objects.filter(title__icontains=self.request.GET.get('q'))
+    # Фильтруем фильмы, по полученному запросу, где название содержит запрос полученный из поля ввода в _sidebar.html с названием q
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['q'] = f'q={self.request.GET.get("q")}&'
+        # Добавляем в словарь значение, которое пришло. Это нужно для того, чтобы работала пагинация
+        # Чтобы работала пагинация, необходимо передать контенст как строку, где q будет равно запросу.
+        # В _pagination.html нужно будет внести её перед другими параметрами {{ q }} {{ year }} {{ genre }}
+        return context
