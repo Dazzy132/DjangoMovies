@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="ab-info-main py-md-5 py-4 editContent"
+             style="padding-left: 3rem; padding-right: 3rem;">
+        <div class="container">
+            <div class="row">
+                {{ flatpage.content|safe }}
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+
+
+{% comment %} Простая страница. Настройка идет через settings.py {% endcomment %}
+{% comment %}
+
+settings.py
+
+Installed apps
+    'django.contrib.sites',
+    'django.contrib.flatpages',
+
+MIDDLEWARE = [
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
+]
+
+SITE_ID = 1
+
+
+urls.py
+
+
+urlpatterns = [
+    path('pages/', include('django.contrib.flatpages.urls')),   # Простые страницы
+]
+
+
+____
+На сайте Админки |
+
+Простые страницы/
+URL - название html файла
+Имя шаблона - Создаем директорию в templates pages и указываем название html файла
+pages/about.html
+
+
+Вроде как можно подключить CKEditor, но хз.
+{% endcomment %}

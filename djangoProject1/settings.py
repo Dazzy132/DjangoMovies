@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django.contrib.sites',     # Простые страницы. Так же нужно указать SITE_ID снизу, зарегать в MIDDLEWARE, указать в urls.py и сделать migrate
+    'django.contrib.flatpages',
+
     'ckeditor',
     'ckeditor_uploader',
     'movies.apps.MoviesConfig',
@@ -53,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'    # Простые страницы
 ]
 
 ROOT_URLCONF = 'djangoProject1.urls'
@@ -209,3 +213,5 @@ RECAPTCHA_PUBLIC_KEY = '6LfOXGIfAAAAAAHpkGnkKtFd3IcVg4oebQKWlyqf'
 RECAPTCHA_PRIVATE_KEY = '6LfOXGIfAAAAAHkz62bVmca1EoQ8AWD_wKUrqlx0'
 RECAPTCHA_DEFAULT_ACTION = 'generic'
 RECAPTCHA_SCORE_THRESHOLD = 0.5
+
+SITE_ID = 1     # Простые страницы
