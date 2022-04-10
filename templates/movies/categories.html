@@ -1,0 +1,46 @@
+{% extends 'movies/base.html' %}
+{% block title %} Django-Movies {% endblock title %}
+{# Название для основной страницы #}
+{% block header %} bg1 {% endblock header %}
+{# Изменение баннера на странице #}
+{% block movie %}
+    <div class="left-ads-display col-lg-9">
+        <div class="row">
+            {% for mov in movie %}
+                <div class="col-md-4 product-men">
+                    <div class="product-shoe-info editContent text-center mt-lg-4">
+                        <div class="men-thumb-item">
+                            <img src="{{ mov.poster.url }}" class="img-fluid" alt="">
+                        </div>
+                        <div class="item-info-product">
+                            <h4 class="">
+                                <a href="{{ mov.get_absolute_url }}" class="editContent">
+                                    {{ mov.title }}
+                                </a>
+                            </h4>
+
+                            <div class="product_price">
+                                <div class="grid-price">
+                                                <span class="money editContent">
+                                                    {{ mov.tagline }}
+                                                </span>
+                                </div>
+                            </div>
+                            <ul class="stars">
+                                <li><a href="#"><span class="fa fa-star" aria-hidden="true"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star" aria-hidden="true"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star-half-o" aria-hidden="true"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star-half-o" aria-hidden="true"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star-o" aria-hidden="true"></span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="grid-img-right mt-4 text-right bg bg1">
+            {% include 'include/_pagination.html' %}
+            {% comment %} include позволяет вставить любой html в любое место кода {% endcomment %}
+        </div>
+    </div>
+{% endblock movie %}
