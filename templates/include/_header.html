@@ -4,12 +4,12 @@
         <!-- nav -->
         <nav class="py-4">
             <div id="logo">
-                <h1><a href="index.html" class="editContent"
+                <h1><a href="{% url 'home' %}" class="editContent"
                        style="outline: none; outline-offset: -2px; cursor: inherit; color: rgb(255, 255, 255); font-size: 40px; background-color: rgba(0, 0, 0, 0); font-family: &quot;Source Sans Pro&quot;, sans-serif;">DjangoMovie</a>
                 </h1>
             </div>
 
-            <label for="drop" class="toggle">Menu</label>
+            <label for="drop"  class="toggle">Menu</label>
             <input type="checkbox" id="drop">
             <ul class="menu mt-2">
                 <li class="active"><a href="/">Главная</a></li>

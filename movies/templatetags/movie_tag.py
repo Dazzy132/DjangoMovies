@@ -14,7 +14,7 @@ def get_categories():
 # Передача темплейт тега в шаблон, который нужно будет рендерить
 @register.inclusion_tag('movies/tags/last_movie.html')
 def get_last_movies(count=5):
-    movies = Movie.objects.order_by('id')[:count]
+    movies = Movie.objects.order_by('-id')[:count]
     return {"last_movies": movies}
 # count=5 стоит по умолчанию. Его можно редактировать вызвав функцию {% get_last_movies count=3 %}
 

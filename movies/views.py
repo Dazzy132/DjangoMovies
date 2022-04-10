@@ -7,7 +7,6 @@ from django.views.generic import ListView, DetailView
 from .models import *
 from .forms import ReviewsForm, RatingForm
 
-
 # Похож на метод get_context_data(). Передает свои данные в другие классы
 class GenreYear:
     """Жанры и года выхода фильмов"""
@@ -42,6 +41,8 @@ class MovieDetailView(GenreYear, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['star_form'] = RatingForm()
+        context['form'] = ReviewsForm()
+        # Для работы Рекаптчи переделана форма. И по этому нужно передавать это поле как form
         return context
 
     # def get_context_data(self, *, object_list=None, **kwargs):

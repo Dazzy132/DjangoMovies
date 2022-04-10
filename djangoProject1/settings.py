@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'movies.apps.MoviesConfig',
+
+    'snowpenguin.django.recaptcha3' # Регистрация рекаптчи
 ]
 
 MIDDLEWARE = [
@@ -201,3 +203,9 @@ CKEDITOR_CONFIGS = {
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# https://www.google.com/recaptcha/admin/
+RECAPTCHA_PUBLIC_KEY = '6LfOXGIfAAAAAAHpkGnkKtFd3IcVg4oebQKWlyqf'
+RECAPTCHA_PRIVATE_KEY = '6LfOXGIfAAAAAHkz62bVmca1EoQ8AWD_wKUrqlx0'
+RECAPTCHA_DEFAULT_ACTION = 'generic'
+RECAPTCHA_SCORE_THRESHOLD = 0.5
