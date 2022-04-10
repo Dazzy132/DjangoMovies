@@ -184,3 +184,14 @@ class Search(ListView):
         # Чтобы работала пагинация, необходимо передать контенст как строку, где q будет равно запросу.
         # В _pagination.html нужно будет внести её перед другими параметрами {{ q }} {{ year }} {{ genre }}
         return context
+
+
+class MovieByCategory(GenreYear, ListView):
+    template_name = 'movies/categories.html'
+    context_object_name = 'movie'
+    allow_empty = False
+
+    def get_queryset(self):
+        return Movie.objects.filter(category__url=self.kwargs['slug'])
+    # В модели Movie есть поле category со связью (ForeignKey), обращаемся к нему через фильтр и достаем через __ переменную url из модели Category
+    # которое будет равно запрашиваемому slug в urls.py  | /<slug:slug>/
