@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),   # Простые страницы
+    path('contact/', include('contact.urls')),   # Регистрация приложения контакт
     path('', include('movies.urls')),
 ]
 
