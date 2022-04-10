@@ -29,7 +29,7 @@ class MoviesView(GenreYear, ListView):
     template_name = "movies/movie_list.html"
     # template_name можно не указывать если писать шаблоны (Название модели_list) или detail. Зависит от класса
     # context_object_name не указывается, потому что обращение в шаблонах идет непосредственно к имени модели - movie.
-
+    paginate_by = 3
 
 class MovieDetailView(GenreYear, DetailView):
     """Полное описание фильма"""
@@ -86,20 +86,36 @@ class ActorView(GenreYear, DetailView):
 
 class FilterMoviesView(GenreYear, ListView):
     """Фильтрация фильмов"""
+    paginate_by = 2
+
+    # def get_queryset(self):
+    #     queryset = Movie.objects.all()
+    #     # Назначаем переменной модель Movie
+    #     if "year" in self.request.GET:
+    #         # Если год есть в запросе
+    #         queryset = queryset.filter(year__in=self.request.GET.getlist("year"))
+    #         # queryset = фильтруем по запрошенному году/годам поле 'year'
+    #     if "genre" in self.request.GET:
+    #         # Если жанр есть в запросе
+    #         queryset = queryset.filter(genres__in=self.request.GET.getlist("genre"))
+    #         # queryset = фильтруем по запрошенному жанр/жанрам поле 'genre'
+    #     return queryset
 
     def get_queryset(self):
-        queryset = Movie.objects.all()
-        # Назначаем переменной модель Movie
-        if "year" in self.request.GET:
-            # Если год есть в запросе
-            queryset = queryset.filter(year__in=self.request.GET.getlist("year"))
-            # queryset = фильтруем по запрошенному году/годам поле 'year'
-        if "genre" in self.request.GET:
-            # Если жанр есть в запросе
-            queryset = queryset.filter(genres__in=self.request.GET.getlist("genre"))
-            # queryset = фильтруем по запрошенному жанр/жанрам поле 'genre'
+        queryset = Movie.objects.filter(
+            Q(year__in=self.request.GET.getlist("year")) |
+            Q(genres__in=self.request.GET.getlist("genre"))
+        ).distinct()
         return queryset
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['year'] = ''.join(f'year={x}&' for x in self.request.GET.getlist('year'))
+# Формирование строки из элементов списка, объединяя их с помощью метода join. Запросы приходят с помощью self.get.request.GET.getlist()
+# Далее идет построение ссылки с помощью цикла. Проходимся циклом по запросу и достаем оттуда все пришедшие года. Приписываем их к year=2019&.
+# & - значит И.
+        context['genre'] = ''.join(f'genre={x}&' for x in self.request.GET.getlist('genre'))
+        return context
 
 class AddStarRating(View):
     """Добавление рейтинга фильму"""

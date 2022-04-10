@@ -38,5 +38,9 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="grid-img-right mt-4 text-right bg bg1">
+            {% include 'include/_pagination.html' %}
+            {% comment %} include позволяет вставить любой html в любое место кода {% endcomment %}
+        </div>
     </div>
 {% endblock movie %}
