@@ -81,7 +81,7 @@
                             {# Полю fields из RatingForm, его содержимому star.choiese #}
                             {# Передается оно в виде кортежа, по этому нужен ключ и значение (k,v) #}
                                 {% for k, v in star_form.fields.star.choices %}
-                                    <input id="rating{{ v }}" type="radio" name="star" value="{{ k }}">
+                                    <input id="rating{{ v }}" type="radio" {% if stars == v %} checked="checked" {% endif %} name="star" value="{{ k }}">
                                     {# В поле ID наше значение. Имя - star #}
                                     <label for="rating{{ v }}">{{ k }}</label>
                                     {# В рейтинг добавляется значение. Ключ как описание #}

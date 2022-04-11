@@ -34,7 +34,6 @@ class MovieDetailView(GenreYear, DetailView):
     """Полное описание фильма"""
     model = Movie
     slug_field = "url"
-
     # slug_field - Поле по которому нужно будет искать запись. "url" - поле в модели Movie
 
     # Получение формы рейтинга
@@ -45,14 +44,39 @@ class MovieDetailView(GenreYear, DetailView):
         # Для работы Рекаптчи переделана форма. И по этому нужно передавать это поле как form
         return context
 
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     # С помощью родителя получаем в переменную context - словарь (**kwargs) обязательно
-    #     context['categories'] = Category.objects.all()
-    #     # Добавляем ключ categories и передаем в него все объекты модели Category
-    #     return context
+    # Получить звезды пользователя. Берется IP пользователя, и фильм на который поставлены звезды
+    def get_user_stars(self, ip, movie_id):
+        if Rating.objects.filter(ip=ip, movie_id=movie_id).exists():
+            # Если есть совпадения по полученным параметрам | exists() - Проверяет есть ли это в БД
+            stars = Rating.objects.get(ip=ip, movie_id=movie_id).star
+            # stars = Из модели рейтинг получаем ip, movie_id ( .star - обращение к RatingStar, так как это поле - ForeignKey )
+        else:
+            # Если нет совпадений, то stats = None и ничего не будет
+            stars = None
+        return stars
+        # Возвращаем звезды пользователя
 
+    # Получаем данные, обязательно request и **kwargs для get_user_stars
+    def get(self, request, *args, **kwargs):
+        ip = AddStarRating.get_client_ip(self, self.request)
+        # ip = Обращение к классу добавления звезд и её функции get_client_ip, которая принимает собственный request
+        movie_id = Movie.objects.get(url=kwargs['slug']).id
+        # movie_od = Получаем из БД Movie url который равен slug
+        stars = self.get_user_stars(ip, movie_id)
+        # stars = себе, передаем полученные данные
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        if stars:
+            context['stars'] = str(stars)
 
+        return self.render_to_response(context)
+
+        # def get_context_data(self, *, object_list=None, **kwargs):
+        #     context = super().get_context_data(**kwargs)
+        #     # С помощью родителя получаем в переменную context - словарь (**kwargs) обязательно
+        #     context['categories'] = Category.objects.all()
+        #     # Добавляем ключ categories и передаем в него все объекты модели Category
+        #     return context
 # Вывод списка категорий (такой способ или с помощью темплейт тегов
 
 class AddReview(View):
