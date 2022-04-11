@@ -27,7 +27,21 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="contact.html" style="color: rgb(255, 255, 255); font-weight: 700; text-transform: uppercase;">Вход</a>
+                {# Если юзер авторизован - выводить - Выход. Если не авторизован - вход/регистрация #}
+                    {% if user.is_authenticated %}
+                        {{ user.username }}
+                        {# Выводить имя пользователя #}
+                    <a href="{% url 'account_logout' %}" style="color: rgb(255, 255, 255); font-weight: 700; text-transform: uppercase;">
+                        Выход
+                    </a>
+                    {% else %}
+                    <a href="{% url 'account_login' %}" style="color: rgb(255, 255, 255); font-weight: 700; text-transform: uppercase;">
+                        Вход
+                    </a>
+                    <a href="{% url 'account_signup' %}" style="color: rgb(255, 255, 255); font-weight: 700; text-transform: uppercase;">
+                        Регистрация
+                    </a>
+                    {% endif %}
                 </li>
             <li>
                 {% comment %} Форма для перевода динамического.{% endcomment %}

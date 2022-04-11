@@ -12,6 +12,7 @@ urlpatterns = [
 
 # Добавление приложений, для которых нужно чтобы работал перевод (Мультиязычность)
 urlpatterns += i18n_patterns(
+    path('accounts/', include('allauth.urls')),  # Авторизация и регистрация
     path('pages/', include('django.contrib.flatpages.urls')),   # Простые страницы
     path('contact/', include("contact.urls")),  # Регистрация приложения контакт
     path("", include("movies.urls")),

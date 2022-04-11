@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'modeltranslation',  # Мультиязычность - pip install django-modeltranslation
     'django.contrib.admin',
-    'django.contrib.auth',
+    'django.contrib.auth',  # Для авторизации проверяем стоит ли он | По умолчанию он вкл. Так же проверить подключен ли django.contrib.sites и переменная SITE_ID = 1
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -46,7 +46,14 @@ INSTALLED_APPS = [
     'movies.apps.MoviesConfig',
     'contact.apps.ContactConfig',
 
-    'snowpenguin.django.recaptcha3'  # Регистрация рекаптчи
+    'snowpenguin.django.recaptcha3',  # Регистрация рекаптчи
+
+    'allauth',   # pip install django-allauth
+    'allauth.account',  # Так же указать переменную AUTHENTICATION_BACKENDS
+
+    'allauth.socialaccount',    # Подключить регистрацию по ВК
+    'allauth.socialaccount.providers.vk',
+    # https://vk.com/dev - регистрацаия приложения.
 ]
 
 MIDDLEWARE = [
@@ -66,7 +73,7 @@ ROOT_URLCONF = 'djangoProject1.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [os.path.join(BASE_DIR, 'templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -91,6 +98,25 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Для авторизации  ( django-allauth ) Делаем миграцию. python manage.py migrate
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+# Для авторизации
+LOGIN_REDIRECT_URL ='/'
+
+# Для регистрации почты
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+# Кол-во дней до подтверждения емейла
+ACCOUNT_USERNAME_MIN_LENGTH = 4
+# Минимальное кол-во символов пользователя
+LOGIN_REDIRECT_URL = "/"
+
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+# Емейл крутится в консоли.
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
