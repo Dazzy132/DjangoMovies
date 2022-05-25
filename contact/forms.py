@@ -1,22 +1,20 @@
-from django import forms
+from django import forms    # Для работы с формами
 from .models import Contact
-from snowpenguin.django.recaptcha3.fields import ReCaptchaField
+from snowpenguin.django.recaptcha3.fields import ReCaptchaField     # Импорт каптчи
 
 
-# Импорт форм, для работы. Контактов, Каптчи
-
+# Сделать форму, которая наследуется от уже созданной модели
 class ContactForm(forms.ModelForm):
     """Форма отправки по Email"""
-    captcha = ReCaptchaField()
-
-    # Подключение Каптчи
+    captcha = ReCaptchaField()   # Подключение Каптчи
 
     class Meta:
         model = Contact
-        fields = ("email",)
+        fields = ("email",)     # Поля для заполнения
         widgets = {
             "email": forms.TextInput(attrs={"class": "editContent", 'placeholder': "Your Email..."})
             # editContent - тот же класс, который использовался в форме
+            # placeholder - Что отображать в текстовом поле
         }
         labels = {
             "email": ''

@@ -1,5 +1,4 @@
-from django import template
-# Регистрация темплейт тега.
+from django import template  # Регистрация темплейт тега.
 from movies.models import Category, Movie
 
 register = template.Library()

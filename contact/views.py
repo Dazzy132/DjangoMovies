@@ -4,11 +4,11 @@ from .models import Contact
 from .forms import ContactForm
 
 
+# CreateView - для работы с формами
 class ContactView(CreateView):
     model = Contact
     form_class = ContactForm
-    success_url = "/"
-# При удачном срабатывании перекидывать на главную
+    success_url = "/"   # При удачном срабатывании перекидывать на главную
 
 
 # Создаем класс для обработки формы. Передаем туда модель контактов и форму.

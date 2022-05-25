@@ -16,7 +16,6 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse('movie_in_category', kwargs={"slug": self.url})
 
-
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
@@ -53,6 +52,7 @@ class Genre(models.Model):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
+
 class Movie(models.Model):
     """Фильм"""
     title = models.CharField(max_length=150, verbose_name='Название')
@@ -82,13 +82,14 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
-
     def get_absolute_url(self):
         return reverse('movie_detail', kwargs={'slug': self.url})
+
     # 'slug' - ключ который запрашиваем в urls.py ( <slug: ) , а self.url - то, что передаем по этому пути
 
     def get_review(self):
         return self.reviews_set.filter(parent__isnull=True)
+
     # Возвращает список отзывов прикрепленных к фильму, фильтруя там где поле parent = Null
     # Оставляет обычные отзывы, комментарии к ним не выводит.
 
@@ -118,6 +119,7 @@ class RatingStar(models.Model):
 
     def __str__(self):
         return f'{self.value}'
+
     # Чтобы добавлять звезды рейтинга, нужно передать её как строку
 
     class Meta:
@@ -125,7 +127,6 @@ class RatingStar(models.Model):
         verbose_name_plural = 'Звезды рейтинга'
         ordering = ['value']
         # Отображение звезд в нужном порядке
-
 
 
 class Rating(models.Model):

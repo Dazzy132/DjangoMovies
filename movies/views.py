@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
-
+    
 from .models import *
 from .forms import ReviewsForm, RatingForm
 
@@ -13,7 +13,6 @@ class GenreYear:
 
     def get_genres(self):
         return Genre.objects.all()
-
     # Получение всех жанров
 
     def get_years(self):
@@ -29,6 +28,7 @@ class MoviesView(GenreYear, ListView):
     # template_name можно не указывать если писать шаблоны (Название модели_list) или detail. Зависит от класса
     # context_object_name не указывается, потому что обращение в шаблонах идет непосредственно к имени модели - movie.
     paginate_by = 3
+
 
 class MovieDetailView(GenreYear, DetailView):
     """Полное описание фильма"""
@@ -133,14 +133,16 @@ class FilterMoviesView(GenreYear, ListView):
         ).distinct()
         return queryset
 
+    # Формирование строки из элементов списка, объединяя их с помощью метода join. Запросы приходят с помощью self.get.request.GET.getlist()
+    # Далее идет построение ссылки с помощью цикла. Проходимся циклом по запросу и достаем оттуда все пришедшие года. Приписываем их к year=2019&.
+    # & - значит И.
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context['year'] = ''.join(f'year={x}&' for x in self.request.GET.getlist('year'))
-# Формирование строки из элементов списка, объединяя их с помощью метода join. Запросы приходят с помощью self.get.request.GET.getlist()
-# Далее идет построение ссылки с помощью цикла. Проходимся циклом по запросу и достаем оттуда все пришедшие года. Приписываем их к year=2019&.
-# & - значит И.
         context['genre'] = ''.join(f'genre={x}&' for x in self.request.GET.getlist('genre'))
         return context
+
 
 class AddStarRating(View):
     """Добавление рейтинга фильму"""
