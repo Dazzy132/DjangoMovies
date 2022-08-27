@@ -1,7 +1,9 @@
 from django.urls import path
 from .views import *
 
+# app_name = 'contact'
+
 urlpatterns = [
-    path('', ContactView.as_view(), name='contact')
-    # Создается для связи формы с views.py, чтобы форма создавалась.
+    path('thanks/', ThanksView.as_view(), name='thanks'),
+    path('form/', IFrameContactView.as_view(), name='icontact')
 ]

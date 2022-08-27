@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
+{% block title %}Страница о нас{% endblock title %}
 {% block content %}
-    <section class="ab-info-main py-md-5 py-4 editContent"
-             style="padding-left: 3rem; padding-right: 3rem;">
-        <div class="container">
-            <div class="row">
-                {{ flatpage.content|safe }}
-            </div>
-        </div>
-    </section>
+  <section class="ab-info-main py-md-5 py-4 editContent" style="padding-left: 3rem; padding-right: 3rem;">
+    <div class="container">
+      <div class="row">
+        {{ flatpage.content|safe }}
+      </div>
+    </div>
+  </section>
 {% endblock content %}
 
 
 {% comment %} Простая страница. Настройка идет через settings.py {% endcomment %}
-{% comment %}
 
+{% comment %}
 settings.py
 
 Installed apps
@@ -25,15 +25,14 @@ MIDDLEWARE = [
 ]
 
 SITE_ID = 1
+{% endcomment %}
 
-
+{% comment %}
 urls.py
 
-
 urlpatterns = [
-    path('pages/', include('django.contrib.flatpages.urls')),   # Простые страницы
+    path('pages/', include('django.contrib.flatpages.urls')),
 ]
-
 
 ____
 На сайте Админки |
@@ -43,6 +42,4 @@ URL - название html файла
 Имя шаблона - Создаем директорию в templates pages и указываем название html файла
 pages/about.html
 
-
-Вроде как можно подключить CKEditor, но хз.
 {% endcomment %}

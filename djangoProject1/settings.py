@@ -10,46 +10,44 @@ SECRET_KEY = 'django-insecure-1hqsvzpcj&ky55y0j40^5-jsy0_6q^o)a=ato#ln)2y$xg)9z$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+    'testserver',
+]
 
 # Application definition
 
 INSTALLED_APPS = [
     # Мультиязычность - pip install django-modeltranslation
     'modeltranslation',
-
     'django.contrib.admin',
-
     # Для авторизации проверяем стоит ли он | По умолчанию он вкл. Так же проверить подключен ли django.contrib.sites и переменная SITE_ID = 1
     'django.contrib.auth',
-
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     # Простые страницы. Так же нужно указать SITE_ID снизу, зарегать в MIDDLEWARE, указать в urls.py и сделать migrate
     'django.contrib.sites',
     'django.contrib.flatpages',
-
+    # pip install django-ckeditor
     'ckeditor',
     'ckeditor_uploader',
-
+    # Регистрация приложений
     'movies.apps.MoviesConfig',
     'contact.apps.ContactConfig',
-
     # Регистрация рекаптчи
     'snowpenguin.django.recaptcha3',
-
     # pip install django-allauth
     'allauth',
     # Так же указать переменную AUTHENTICATION_BACKENDS
     'allauth.account',
-
     # Подключить регистрацию по ВК
     'allauth.socialaccount',
     'allauth.socialaccount.providers.vk',
-    # https://vk.com/dev - регистрацаия приложения.
+    # https://vk.com/dev - регистрация приложения.
 ]
 
 MIDDLEWARE = [
@@ -60,16 +58,21 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',  # Простые страницы
-    'django.middleware.locale.LocaleMiddleware'  # Мультиязычность
+    # Подключение простых страниц
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    # Подключение мультиязычности
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 ROOT_URLCONF = 'djangoProject1.urls'
+
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [TEMPLATES_DIR]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -96,27 +99,22 @@ DATABASES = {
 }
 
 
-
-
-# Для авторизации  ( django-allauth ) Делаем миграцию. python manage.py migrate
+# Для авторизации (django-allauth) + Миграция
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-# Для авторизации
+# Авторизация: Перенаправление после логина
 LOGIN_REDIRECT_URL ='/'
 
-# Для регистрации почты
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+# Работа с почтой: https://django-allauth.readthedocs.io/en/latest/configuration.html
 # Кол-во дней до подтверждения емейла
-ACCOUNT_USERNAME_MIN_LENGTH = 4
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 # Минимальное кол-во символов пользователя
-LOGIN_REDIRECT_URL = "/"
-
-EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+ACCOUNT_USERNAME_MIN_LENGTH = 4
 # Емейл крутится в консоли.
-
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
 
 # Password validation
@@ -148,7 +146,7 @@ USE_I18N = True  # Проверяем True ли. Для мультиязычно
 
 USE_TZ = True
 
-# Для мультиязычности. Делаем функцию лямбда. И кортежем передаем языки, на которых будет работать мультиязычность
+# Мультиязычность. Делаем функцию лямбда. И кортежем передаем языки, на которых будет работать мультиязычность
 gettext = lambda s: s
 LANGUAGES = (
     ('ru', gettext('Russia')),
@@ -171,10 +169,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-
-
-
+# CKEDITOR
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
 CKEDITOR_CONFIGS = {
@@ -248,10 +243,12 @@ CKEDITOR_CONFIGS = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Каптча
 # https://www.google.com/recaptcha/admin/
 RECAPTCHA_PUBLIC_KEY = '6LfOXGIfAAAAAAHpkGnkKtFd3IcVg4oebQKWlyqf'
 RECAPTCHA_PRIVATE_KEY = '6LfOXGIfAAAAAHkz62bVmca1EoQ8AWD_wKUrqlx0'
 RECAPTCHA_DEFAULT_ACTION = 'generic'
 RECAPTCHA_SCORE_THRESHOLD = 0.5
 
-SITE_ID = 1  # Простые страницы
+# Простые страницы
+SITE_ID = 1

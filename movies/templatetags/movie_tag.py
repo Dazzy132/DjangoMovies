@@ -1,6 +1,8 @@
-from django import template  # Регистрация темплейт тега.
+# Регистрация темплейт тега 1
+from django import template
 from movies.models import Category, Movie
 
+# Регистрация темплейт тега 2
 register = template.Library()
 
 
@@ -10,15 +12,14 @@ def get_categories():
     return Category.objects.all()
 
 
-# Передача темплейт тега в шаблон, который нужно будет рендерить
 @register.inclusion_tag('movies/tags/last_movie.html')
 def get_last_movies(count=5):
+    """Передача в шаблон данных для последующего рендеринга
+    count=5 по умолчанию. Значение можно изменять вызывая функцию след.
+    образом - {% get_last_movies count=3 %}"""
     movies = Movie.objects.order_by('-id')[:count]
     return {"last_movies": movies}
-# count=5 стоит по умолчанию. Его можно редактировать вызвав функцию {% get_last_movies count=3 %}
 
-# Темлпейттеги создаются для того, чтобы не засирать код. В этом случае, чтобы не засирать views.py для получения списка Категорий, для вывода в header
-# Теги подключаются с помощью загрузки тегов {load название_файла} - В текущем случае movie_tag
-
+# Подключение тегов - {% load movie_tag %}
 # Симпл тег полезен для того, чтобы передать информацию.
-# Инклюжен тег так же передает информацию, а так же её рендерит.
+# Инклюжн тег так же передает информацию, а так же её рендерит.

@@ -1,25 +1,20 @@
 {% extends 'base.html' %}
 {% block title %} {% endblock title %}
 {% block content %}
-    {% comment %} Осонвная разметка для обеих страниц (list/detail) {% endcomment %}
-    <section class="ab-info-main py-md-5 py-4 editContent"
-             style="padding-left: 3rem; padding-right: 3rem;">
-        {% block container %}
-            <div class="container py-md-3">
-            {% comment %} <div class="container-fluid py-md-3"> {% endcomment %}
-        {% endblock container %}
-        <div class="row">
-            {% block sidebar %}
-                <div class="side-bar col-lg-3">
-            {% endblock sidebar %}
-            {% include 'include/_sidebar.html' %}
-            </div>
-            {% block movie %}
-            {% endblock movie %}
-        {% comment %} Информация о фильме для movie_detail {% endcomment %}
-        </div>
-        </div>
-    </section>
+  <section class="ab-info-main py-md-5 py-4 editContent" style="padding-left: 3rem; padding-right: 3rem;">
+{% block container %}
+<div class="container py-md-3">
+{% endblock container %}
+
+<div class="row">
+{% block sidebar %}<div class="side-bar col-lg-3">{% endblock sidebar %}{% include 'include/_sidebar.html' %}</div>
+
+{% comment %} Информация о фильме для movie_detail {% endcomment %}
+{% block movie %}
+{% endblock movie %}
+</div>
+</div>
+</section>
 {% endblock content %}
 
 {% comment %} Этот файл наследует главный   шаблон страницы{% endcomment %}

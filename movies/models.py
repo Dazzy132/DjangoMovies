@@ -5,7 +5,7 @@ from django.urls import reverse
 
 
 class Category(models.Model):
-    """Категории"""
+    """Модель категорий"""
     name = models.CharField(max_length=150, verbose_name='Категория')
     description = models.TextField(verbose_name='Описание')
     url = models.SlugField(max_length=150, unique=True)
@@ -22,7 +22,7 @@ class Category(models.Model):
 
 
 class Actor(models.Model):
-    """Актеры и режиссеры"""
+    """Модель актеров и режиссеров"""
     name = models.CharField(max_length=150, verbose_name='Имя')
     age = models.PositiveSmallIntegerField(default=0, verbose_name='Возраст')
     description = models.TextField(verbose_name='Описание')
@@ -40,7 +40,7 @@ class Actor(models.Model):
 
 
 class Genre(models.Model):
-    """Жанры"""
+    """Модель жанров"""
     name = models.CharField(max_length=150, verbose_name='Имя')
     description = models.TextField(verbose_name='Описание')
     url = models.SlugField(max_length=160, unique=True)
@@ -56,26 +56,48 @@ class Genre(models.Model):
 class Movie(models.Model):
     """Фильм"""
     title = models.CharField(max_length=150, verbose_name='Название')
-    tagline = models.CharField(max_length=100, verbose_name='Слоган', default='')
+    tagline = models.CharField(
+        max_length=100, verbose_name='Слоган', default=''
+    )
     description = models.TextField(verbose_name='Описание')
+    # Фотографии | upload_to - в какую папку загружать
     poster = models.ImageField(upload_to='poster/', verbose_name='Постер')
-    year = models.PositiveSmallIntegerField(default='2022', verbose_name='Дата выхода')
+    # PositiveSmall - нельзя поставить большую дату и меньше 0
+    year = models.PositiveSmallIntegerField(
+        default='2022', verbose_name='Дата выхода'
+    )
     country = models.CharField(max_length=150, verbose_name='Страна')
-    directors = models.ManyToManyField(Actor, verbose_name='Режиссеры', related_name='film_director')
-    actors = models.ManyToManyField(Actor, verbose_name='Актеры', related_name='film_actor')
+    # Многие ко многим. У Фильма может быть несколько директоров
+    directors = models.ManyToManyField(
+        Actor, verbose_name='Режиссеры', related_name='film_director'
+    )
+    actors = models.ManyToManyField(
+        Actor, verbose_name='Актеры', related_name='film_actor'
+    )
     genres = models.ManyToManyField(Genre, verbose_name='Жанры')
-    world_premiere = models.DateField(default=date.today, verbose_name='Премьера в мире')
-    budget = models.PositiveIntegerField(default=0, help_text='Указывать сумму в $', verbose_name='Бюджет')
+    # Мировая премьера. По умолчанию ставится сегодняшний день
+    # from datetime import date
+    world_premiere = models.DateField(
+        default=date.today, verbose_name='Премьера в мире'
+    )
+    # Бюджет. По умолчанию 0. Бюджет не может быть меньше 0 благодаря
+    # PositiveIntegerField, help_text - отображение подсказки в админке
+    budget = models.PositiveIntegerField(
+        default=0, help_text='Указывать сумму в $', verbose_name='Бюджет'
+    )
     fees_in_usa = models.PositiveIntegerField(
         default=0, help_text='Указывать сумму в $', verbose_name='Сборы в США'
     )
     fees_in_world = models.PositiveIntegerField(
         default=0, help_text='Указывать сумму в $', verbose_name='Сборы в мире'
     )
+    # При удалении категории, у всех фильмов будет значение Null,
+    # и они не удалятся - models.SET_NULL, null=True,
+    # фильм может не иметь категорию
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, verbose_name='Категория'
+        Category,
+        on_delete=models.SET_NULL, null=True, verbose_name='Категория'
     )
-    # SET_NULL - Если удаляем категорию, то поле будет равно Null. И указываем что null может быть True
     url = models.SlugField(max_length=150, unique=True)
     draft = models.BooleanField(default=False, verbose_name='Черновик')
 
@@ -85,13 +107,12 @@ class Movie(models.Model):
     def get_absolute_url(self):
         return reverse('movie_detail', kwargs={'slug': self.url})
 
-    # 'slug' - ключ который запрашиваем в urls.py ( <slug: ) , а self.url - то, что передаем по этому пути
-
     def get_review(self):
+        """Дополнительный метод у модели. Получение отзывов.
+        Возвращает список отзывов прикрепленных к фильму, фильтруя, где поле
+        parent=Null. Это означает, что комментарии закрепленные на комментариях
+        отображаться не будут"""
         return self.reviews_set.filter(parent__isnull=True)
-
-    # Возвращает список отзывов прикрепленных к фильму, фильтруя там где поле parent = Null
-    # Оставляет обычные отзывы, комментарии к ним не выводит.
 
     class Meta:
         verbose_name = 'Фильм'
@@ -99,11 +120,15 @@ class Movie(models.Model):
 
 
 class MovieShots(models.Model):
-    """Кадры из фильма"""
+    """Модель кадров из фильма"""
     title = models.CharField(max_length=150, verbose_name='Заголовок')
     description = models.TextField(verbose_name='Описание')
-    image = models.ImageField(upload_to='movie_shots/', verbose_name='Изображение')
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name='Фильм')
+    image = models.ImageField(
+        upload_to='movie_shots/', verbose_name='Изображение'
+    )
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, verbose_name='Фильм'
+    )
 
     def __str__(self):
         return self.title
@@ -114,26 +139,31 @@ class MovieShots(models.Model):
 
 
 class RatingStar(models.Model):
-    """Звезда рейтинга"""
-    value = models.PositiveSmallIntegerField(default=0, verbose_name='Значение')
+    """Модель количества звезд рейтинга"""
+    value = models.PositiveSmallIntegerField(
+        default=0, verbose_name='Значение'
+    )
 
     def __str__(self):
+        # Чтобы добавлять звезды рейтинга, нужно передать её как строку
         return f'{self.value}'
-
-    # Чтобы добавлять звезды рейтинга, нужно передать её как строку
 
     class Meta:
         verbose_name = 'Звезда рейтинга'
         verbose_name_plural = 'Звезды рейтинга'
-        ordering = ['value']
         # Отображение звезд в нужном порядке
+        ordering = ('value',)
 
 
 class Rating(models.Model):
-    """Рейтинг"""
+    """Модель рейтинга"""
     ip = models.CharField(max_length=15, verbose_name='IP адрес')
-    star = models.ForeignKey(RatingStar, on_delete=models.CASCADE, verbose_name='Звезда')
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name='Фильм')
+    star = models.ForeignKey(
+        RatingStar, on_delete=models.CASCADE, verbose_name='Звезда'
+    )
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, verbose_name='Фильм'
+    )
 
     def __str__(self):
         return f'{self.star} - {self.movie}'
@@ -148,11 +178,16 @@ class Reviews(models.Model):
     email = models.EmailField()
     name = models.CharField(max_length=100, verbose_name='Имя')
     text = models.TextField(max_length=5000, verbose_name='Сообщение')
+    # Запись ссылается на запись в этой же таблице благодаря self
+    # Это позволяет отзывы на отзывы
     parent = models.ForeignKey(
-        'self', verbose_name='Родитель', on_delete=models.SET_NULL, blank=True, null=True
+        'self',
+        verbose_name='Родитель',
+        on_delete=models.SET_NULL, blank=True, null=True
     )
-    # Запись ссылается на запись в этой же таблице
-    movie = models.ForeignKey(Movie, verbose_name='Фильм', on_delete=models.CASCADE)
+    movie = models.ForeignKey(
+        Movie, verbose_name='Фильм', on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return f'{self.name} - {self.movie}'

@@ -1,250 +1,258 @@
 {% extends 'movies/base.html' %}
-{% load static i18n %} {# Подключение мультиязычности #}
+{# Подключение мультиязычности #}
+{% load static i18n %}
+{# Подключение капчи #}
 {% load recaptcha3 %}
-{% block title %} {{ movie.title }} {% endblock title %}
+{% block title %}{{ movie.title }}{% endblock title %}
 {% block container %}
-    <div class="container py-md-3">
+  <div class="container py-md-3">
 {% endblock container %}
 
 {% block sidebar %}
-    <div class="side-bar col-lg-4">
+  <div class="side-bar col-lg-4">
 {% endblock sidebar %}
-{# Изменение размера сайдбара с 3х до 4х #}
 
 {% block movie %}
-    <div class="left-ads-display col-lg-8">
-        {% comment %} Так как передан один аргумент pk, то можно не проходиться циклом {% endcomment %}
-        <div class="row">
-            <div class="desc1-left col-md-6">
-                <img src="{{ movie.poster.url }}" class="img-fluid" alt="">
-            </div>
-            <div class="desc1-right col-md-6 pl-lg-4">
-                <h3 class="editContent" style="outline: none; cursor: inherit;">
-                    {{ movie.title }}
-                </h3>
-                <h5 class="editContent"></h5>
-                <ul>
-                    <li style="list-style: none">
-                        <span><b>{% trans 'Год' %}:</b> {{ movie.year }}</span></li>
-                    <li style="list-style: none">
-                        <span><b>{% trans 'Страна' %}:</b> {{ movie.country }}</span>
-                    </li>
-                    <li style="list-style: none">
-                        <span><b>{% trans 'Слоган' %}:</b> {{ movie.tagline }}</span>
-                    </li>
-                    <li style="list-style: none">
-                        <span><b>{% trans 'Режиссер' %}:</b>
-                            {% comment %} Так как связь ManyToMany, то нужно пройтись циклом {% endcomment %}
-                            {% for director in movie.directors.all %}
-                                <a href="{{ director.get_absolute_url }}">{{ director.name }}</a>
-                            {% endfor %}
-                        </span>
-                    </li>
-                    <li style="list-style: none"><span><b>{% trans 'Актеры' %}:</b>
-                        {% for actor in movie.actors.all %}
-                            <a href="{{ actor.get_absolute_url }}">{{ actor.name }}</a>
-                        {% endfor %}
-                        {% comment %}
-                    Возможный способ передачи
-                        {% for actor in movie.actors.all %}
-                            <a href="{% url 'actor_detail' actor.name %}">{{ actor.name }}</a>
-                        {% endfor %}
-                    {% endcomment %}
-                    </span>
-                    </li>
-                    <li style="list-style: none"><span><b>{% trans 'Жанр' %}:</b>
-                        {% for genre in movie.genres.all %}
-                            {{ genre.name }}
-                        {% endfor %}
-                                    </span>
-                    </li>
-                    <li style="list-style: none">
-                        <span><b>{% trans 'Премьера в мире' %}:</b> {{ movie.world_premiere }}</span>
-                    </li>
-                    <li style="list-style: none">
-                        <span><b>{% trans 'Бюджет' %}:</b> ${{ movie.budget }}</span></li>
-                    <li style="list-style: none">
-                        <span><b>{% trans 'Сборы в США'%}:</b> ${{ movie.fees_in_usa }}</span></li>
-                    <li style="list-style: none">
-                        <span><b>{% trans 'Сборы в мире' %}:</b> ${{ movie.fees_in_world }}</span>
-                    </li>
-                    <li>
-                        {% comment %} Добавление формы рейтинга {% endcomment %}
-                        <form action="{% url 'add_rating' %}" method="post" name="rating">
-                        {# ссылка на добавление рейтинга. метод пост . имя рейтинг #}
-                            <b>{% trans 'Рейтинг' %}:</b>
-                            {% csrf_token %}
-                            <input type="hidden" value="{{ movie.id }}" name="movie">
-                            {# Скрытое поле ввода. Значение - ID фильма. Имя - movie #}
-                            <span class="rating">
-                            {# Обращение к переданному полю контекста MovieDetailView #}
-                            {# Полю fields из RatingForm, его содержимому star.choiese #}
-                            {# Передается оно в виде кортежа, по этому нужен ключ и значение (k,v) #}
-                                {% for k, v in star_form.fields.star.choices %}
-                                    <input id="rating{{ v }}" type="radio" {% if stars == v %} checked="checked" {% endif %} name="star" value="{{ k }}">
-                                    {# В поле ID наше значение. Имя - star #}
-                                    <label for="rating{{ v }}">{{ k }}</label>
-                                    {# В рейтинг добавляется значение. Ключ как описание #}
-                                {% endfor %}
-                            </span>
-                            <span class="editContent"></span>
-                        </form>
-                    </li>
-                </ul>
-                <div class="share-desc">
-                    <div class="share">
-                        <h4 class="editContent"
-                            style="outline: none; cursor: inherit;">
-                            Share:</h4>
-                        <ul class="w3layouts_social_list list-unstyled">
-                            <li>
-                                <a href="#" class="w3pvt_facebook editContent"
-                                   style="outline: none; cursor: inherit;">
-                                                <span class="fa fa-facebook-f"
-                                                      style="outline: none; cursor: inherit;"></span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="w3pvt_twitter editContent"
-                                   style="outline: none; cursor: inherit;">
-                                                <span class="fa fa-twitter"
-                                                      style="outline: none; cursor: inherit;"></span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="w3pvt_dribble editContent"
-                                   style="outline: none; cursor: inherit;">
-                                                <span class="fa fa-dribbble"
-                                                      style="outline: none; cursor: inherit;"></span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-        <div class="row sub-para-w3layouts mt-5">
-
-            <h3 class="shop-sing editContent">
-                {% trans 'О фильме' %} {{ movie.title }}
-            </h3>
-            <p>
-                {% for image in movie.movieshots_set.all %}
-                    <img src="{{ image.image.url }}" class="img-movie-shots "
-                         alt="{{ image.description }}">
+  <div class="left-ads-display col-lg-8">
+    <div class="row">
+      <div class="desc1-left col-md-6">
+        <img src="{{ movie.poster.url }}" class="img-fluid" alt="">
+      </div>
+      <div class="desc1-right col-md-6 pl-lg-4">
+        <h3 class="editContent" style="outline: none; cursor: inherit;">
+          {{ movie.title }}
+        </h3>
+        <h5 class="editContent"></h5>
+        <ul>
+          <li style="list-style: none">
+            {# trans - статические слова для перевода #}
+            <span><b>{% trans 'Год' %}:</b> {{ movie.year }}</span></li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Страна' %}:</b> {{ movie.country }}</span>
+          </li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Слоган' %}:</b> {{ movie.tagline }}</span>
+          </li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Режиссер' %}:</b>
+                {% comment %} Так как связь ManyToMany, то нужно пройтись циклом {% endcomment %}
+              {% for director in movie.directors.all %}
+                <a href="{{ director.get_absolute_url }}">{{ director.name }}</a>
+              {% endfor %}
+            </span>
+          </li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Актеры' %}:</b>
+            {% for actor in movie.actors.all %}
+              <a href="{{ actor.get_absolute_url }}">{{ actor.name }}</a>
+            {% endfor %}
+            {% comment %}
+              Передача без get_absolute_url
+                {% for actor in movie.actors.all %}
+                    <a href="{% url 'actor_detail' actor.name %}">{{ actor.name }}</a>
                 {% endfor %}
-            </p>
-            <p class="editContent" style="outline: none; cursor: inherit;">
-                {{ movie.description|safe }}
-            </p>
-            <p class="mt-3 italic-blue editContent"
-               style="outline: none; cursor: inherit;">
-                <iframe width="560" height="315"
-                        src="https://www.youtube.com/embed/A36LahZNUiE?controls=0"
-                        frameborder="0" allow="accelerometer; autoplay;
-                                                                           encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-
-                </iframe>
-            </p>
+            {% endcomment %}
+            </span>
+          </li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Жанр' %}:</b>
+            {% for genre in movie.genres.all %}
+              {{ genre.name }}
+            {% endfor %}
+            </span>
+          </li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Премьера в мире' %}:</b> {{ movie.world_premiere }}</span>
+          </li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Бюджет' %}:</b> ${{ movie.budget }}</span></li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Сборы в США' %}:</b> ${{ movie.fees_in_usa }}</span>
+          </li>
+          <li style="list-style: none">
+            <span><b>{% trans 'Сборы в мире' %}:</b> ${{ movie.fees_in_world }}</span>
+          </li>
+          <li>
+            {% comment %} Добавление формы рейтинга {% endcomment %}
+            <form action="{% url 'add_rating' %}" method="post" name="rating">
+              {% csrf_token %}
+              <b>{% trans 'Рейтинг' %}:</b>
+              {# Скрытое поле, чтобы передать в функцию id фильма #}
+              {# Получить id можно через - request.POST.get("movie") #}
+              <input type="hidden" value="{{ movie.id }}" name="movie">
+              <span class="rating">
+                {% comment %}
+                star_form - Форма переданная через контест
+                fields.star.choices - Обращение к полю формы где:
+                k - количество звезд
+                v - оценка
+                {% endcomment %}
+                {% for k, v in star_form.fields.star.choices %}
+                  {% comment %}
+                  Так как метод передачи radio, то поля id и for должны быть одинаковыми.
+                  <input id=rating{{ v }}> - поле передачи информацию в форму
+                  <label for=rating{{ v }}>{{ k }} - то, что будет отображаться на странице
+                  {% endcomment %}
+                  <input id="rating{{ v }}"
+                         type="radio"
+                         {# stars передается в контекст страницы. Оно означает поставленный рейтинг пользователя #}
+                         {# Если он поставлен и равен значению из цикла, то звезды загорятся #}
+                         {% if stars == v %}checked="checked"{% endif %}
+                         {# По имени star отслеживается сколько звезд поставил пользователь для формы #}
+                         name="star"
+                         value="{{ k }}">
+                  <label for="rating{{ v }}">{{ k }}</label>
+                  {# В рейтинг добавляется значение. Ключ как описание #}
+                {% endfor %}
+              </span>
+              <span class="editContent"></span>
+            </form>
+          </li>
+        </ul>
+        <div class="share-desc">
+          <div class="share">
+            <h4 class="editContent"
+                style="outline: none; cursor: inherit;">
+              Share:</h4>
+            <ul class="w3layouts_social_list list-unstyled">
+              <li>
+                <a href="#" class="w3pvt_facebook editContent"
+                   style="outline: none; cursor: inherit;">
+                  <span class="fa fa-facebook-f" style="outline: none; cursor: inherit;"></span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="w3pvt_twitter editContent"
+                   style="outline: none; cursor: inherit;">
+                  <span class="fa fa-twitter" style="outline: none; cursor: inherit;"></span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="w3pvt_dribble editContent"
+                   style="outline: none; cursor: inherit;">
+                  <span class="fa fa-dribbble" style="outline: none; cursor: inherit;"></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="clearfix"></div>
         </div>
-        <hr>
-        <div class="row">
-            <div class="single-form-left">
-                <!-- contact form grid -->
-                <div class="contact-single">
-                    <h3 class="editContent" style="outline: none; cursor: inherit;">
-                                    <span class="sub-tittle editContent"
-                                          style="outline: none; cursor: inherit;">{{ movie.reviews_set.count }}</span>{% trans 'Оставить отзыв' %}</h3>
-                    <form action="{% url 'add_review' movie.id %}" method="post" class="mt-4" id="formReview">
-                        {% comment %} {% url 'add review' - ссылка на путь urls.py , и передаем id фильма %}
-                         Метод отправки формы - post,
-                         JS | id = formReview - ссылка на форму      {% endcomment %}
-                        {% csrf_token %}
-                        <input type="hidden" name="parent" id="contactparent" value="">
-                        {% comment %} Поле ввода для ответа на комментарии. {% endcomment %}
-                        <div class="form-group editContent">
-                            <label for="contactcomment" class="editContent">
-                                Ваш комментарий *
-                            </label>
+      </div>
+    </div>
 
-                            {% comment %} Через name="" даем имена с модели Reviews {% endcomment %}
-{#                            <textarea class="form-control border" rows="5" name="text"#}
-{#                                      id="contactcomment" required=""></textarea>#}
-                            {% comment %} Для подключения рекаптчи это уже не нужно. Оно передавалось как html код, а теперь как форма {% endcomment %}
-                            {{ form.text }}
-                            {# Для работы рекаптчи. form получен из get_context_data  #}
-                        </div>
-                        <div class="d-sm-flex">
-                            <div class="col-sm-6 form-group p-0 editContent">
-                                <label for="contactusername" class="editContent">
-                                    Имя *
-                                </label>
-{#                                <input type="text" class="form-control border" name="name"#}
-{#                                       id="contactusername" required="">#}
-                                {{ form.name }}
-                            </div>
-                            <div class="col-sm-6 form-group ml-sm-3 editContent">
-                                <label for="contactemail" class="editContent">
-                                    Email *
-                                </label>
-{#                                <input type="email" class="form-control border" name="email"#}
-{#                                       id="contactemail" required="">#}
-                                {{ form.email }}
-                            </div>
-                            {{ form.captcha }}
-                            {# Для работы каптчи #}
-                        </div>
-                        <button type="submit"
-                                class="mt-3 btn btn-success btn-block py-3">
-                            Отправить
-                        </button>
-                    </form>
-                </div>
-                <!--  //contact form grid ends here -->
-            </div>
-        </div>
-        {% comment %} Выводим отзывы относящиеся к фильму через связь movie.reviews_set.all {% endcomment %}
-        {% for review in movie.get_review %}
-            <div class="media py-5">
-                <img src="{% static 'images/te2.jpg' %}" class="mr-3 img-fluid" alt="image">
-                <div class="media-body mt-4">
-                    <h5 class="mt-0 editContent">
-                        {{ review.name }}
-                    </h5>
-                    <p class="mt-2 editContent">
-                        {{ review.text }}
-                    </p>
-                    <a href="#formReview" onclick="addReview('{{ review.name }}', '{{ review.id }}')">Ответить</a>
-                    {% comment %} Оставить отзыв на отзыв
-                    #formReview - ссылка на форму,
-                    onclick="AddReview" - при нажатии передается имя Автора сообщения и его ID в скрипт addReview{% endcomment %}
-                    {% for rev in review.reviews_set.all %}
-                        {# Получаем все отзывы, завязанные на нашем отзове. И выводим их #}
-                        <div class="media mt-5 editContent">
-                            <a class="pr-3" href="#">
-                                <img src="{% static 'images/te2.jpg' %}" class="img-fluid " alt="image">
-                            </a>
-                            <div class="media-body">
-                                <h5 class="mt-0 editContent">{{ rev.name }}</h5>
-                                <p class="mt-2 editContent">{{ rev.text }}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
+  {# Нижняя часть сайта #}
+    <div class="row sub-para-w3layouts mt-5">
+      <h3 class="shop-sing editContent">
+        {% trans 'О фильме' %} {{ movie.title }}
+      </h3>
+      <p>
+        {% for image in movie.movieshots_set.all %}
+          {# Чтобы отобразить фотографию нужно .url #}
+          <img src="{{ image.image.url }}" class="img-movie-shots "
+               alt="{{ image.description }}">
         {% endfor %}
+      </p>
+      <p class="editContent" style="outline: none; cursor: inherit;">
+        {{ movie.description|safe }}
+      </p>
+      <p class="mt-3 italic-blue editContent"
+         style="outline: none; cursor: inherit;">
+        <iframe width="560" height="315"
+                src="https://www.youtube.com/embed/A36LahZNUiE?controls=0"
+                frameborder="0" allow="accelerometer; autoplay;
+                encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+        </iframe>
+      </p>
     </div>
+    <hr>
+    <div class="row">
+      <div class="single-form-left">
+        <!-- contact form grid -->
+        <div class="contact-single">
+          <h3 class="editContent" style="outline: none; cursor: inherit;">
+            <span class="sub-tittle editContent" style="outline: none; cursor: inherit;">
+              {{ movie.reviews_set.count }}
+            </span>{% trans 'Оставить отзыв' %}
+          </h3>
+
+          {# Форма добавления отзыва #}
+          <form action="{% url 'add_review' movie.id %}"
+                method="post"
+                class="mt-4"
+                {# JS | id = formReview - ссылка на форму #}
+                id="formReview">
+            {% csrf_token %}
+            <input type="hidden" name="parent" id="contactparent" value="">
+            <div class="form-group editContent">
+              <label for="contactcomment" class="editContent">
+                Ваш комментарий *
+              </label>
+              {{ form.text }}
+               {# Для работы рекаптчи. form получен из get_context_data #}
+            </div>
+            <div class="d-sm-flex">
+              <div class="col-sm-6 form-group p-0 editContent">
+                <label for="contactusername" class="editContent">
+                  Имя *
+                </label>
+                {{ form.name }}
+              </div>
+              <div class="col-sm-6 form-group ml-sm-3 editContent">
+                <label for="contactemail" class="editContent">
+                  Email *
+                </label>
+                {{ form.email }}
+              </div>
+              {{ form.captcha }}
+              {# Для работы каптчи #}
+            </div>
+            <button type="submit"
+                    class="mt-3 btn btn-success btn-block py-3">
+              Отправить
+            </button>
+          </form>
+        </div>
+        <!--  //contact form grid ends here -->
+      </div>
     </div>
-    <script>
-        function addReview(name, id) {
-            document.getElementById("contactparent").value = id;
-            document.getElementById("contactcomment").innerText = `${name}, `
-        }
 
-        {# ID будет подставляться в значение поля parent - <input type="hidden" name="parent" id="contactparrent" value=""> #}
-        {# А имя пользователя - с нашего поля - сообщения textarea  #}
-    </script>
-
+    {% comment %} Выводим отзывы относящиеся к фильму {% endcomment %}
+    {% for review in movie.get_review %}
+      <div class="media py-5">
+        <img src="{% static 'images/te2.jpg' %}" class="mr-3 img-fluid"
+             alt="image">
+        <div class="media-body mt-4">
+          <h5 class="mt-0 editContent">
+            {{ review.name }}
+          </h5>
+          <p class="mt-2 editContent">
+            {{ review.text }}
+          </p>
+          <a href="#formReview"
+             onclick="addReview('{{ review.name }}', '{{ review.id }}')">Ответить</a>
+          {% for rev in review.reviews_set.all %}
+            <div class="media mt-5 editContent">
+              <a class="pr-3" href="#">
+                <img src="{% static 'images/te2.jpg' %}" class="img-fluid "
+                     alt="image">
+              </a>
+              <div class="media-body">
+                <h5 class="mt-0 editContent">{{ rev.name }}</h5>
+                <p class="mt-2 editContent">{{ rev.text }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  </div>
+  <script>
+      function addReview(name, id) {
+          document.getElementById("contactparent").value = id;
+          document.getElementById("contactcomment").innerText = `${name}, `
+      }
+  </script>
+</div>
 {% endblock movie %}

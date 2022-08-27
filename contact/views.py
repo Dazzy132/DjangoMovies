@@ -1,16 +1,17 @@
-from django.views.generic import CreateView
-
-from .models import Contact
+from django.urls import reverse
+from django.views.generic import CreateView, TemplateView
 from .forms import ContactForm
 
 
-# CreateView - для работы с формами
-class ContactView(CreateView):
-    model = Contact
+class ThanksView(TemplateView):
+    """Отображение страницы Спасибо"""
+    template_name = 'contact/thanks.html'
+
+
+class IFrameContactView(CreateView):
+    """Форма подписки по email"""
     form_class = ContactForm
-    success_url = "/"   # При удачном срабатывании перекидывать на главную
+    template_name = 'contact/contact_form.html'
 
-
-# Создаем класс для обработки формы. Передаем туда модель контактов и форму.
-# CreateView - для работы с формами.
-
+    def get_success_url(self):
+        return reverse('thanks')
