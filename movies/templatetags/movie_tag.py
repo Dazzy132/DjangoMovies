@@ -1,5 +1,6 @@
 # Регистрация темплейт тега 1
 from django import template
+
 from movies.models import Category, Movie
 
 # Регистрация темплейт тега 2

@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.views.generic import CreateView, TemplateView
+
 from .forms import ContactForm
 
 

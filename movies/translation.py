@@ -1,6 +1,7 @@
 # Подключение мультиязычности для моделей
-from modeltranslation.translator import register, TranslationOptions
-from .models import Category, Actor, Movie, Genre, MovieShots
+from modeltranslation.translator import TranslationOptions, register
+
+from .models import Actor, Category, Genre, Movie, MovieShots
 
 
 # Регистрируем модель для перевода

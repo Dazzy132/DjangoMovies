@@ -1,10 +1,11 @@
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.views import View
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView, ListView
+
+from .forms import RatingForm, ReviewsForm
 from .models import *
-from .forms import ReviewsForm, RatingForm
 
 
 class GenreYear:

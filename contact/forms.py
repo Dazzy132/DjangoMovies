@@ -1,6 +1,8 @@
-from django import forms    # Для работы с формами
+from django import forms  # Для работы с формами
+from snowpenguin.django.recaptcha3.fields import \
+    ReCaptchaField  # Импорт каптчи
+
 from .models import Contact
-from snowpenguin.django.recaptcha3.fields import ReCaptchaField     # Импорт каптчи
 
 
 class ContactForm(forms.ModelForm):
