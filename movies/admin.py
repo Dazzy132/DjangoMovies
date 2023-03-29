@@ -91,13 +91,9 @@ class MovieAdmin(TranslationAdmin):
     тех же кадров из фильма, комментариев основанных на этом фильме. FK/MTM
 
     """
-    # Поля, которые отображаются в админке
     list_display = ("title", "category", "url", "draft")
-    # Поля по которым можно фильтровать данные
     list_filter = ("category", "year")
-    # Автоматическое генерирование поля url на основе title
     prepopulated_fields = {"url": ("title",)}
-    # Поля по которым можно осуществлять поиск в админке
     search_fields = ("title", "category__name")
     # Подключение моделей завязанных на модели фильмов
     inlines = [MovieShotsInline, ReviewInline]
@@ -105,7 +101,6 @@ class MovieAdmin(TranslationAdmin):
     save_on_top = True
     # Добавить кнопку для сохранения дублей. Для создания множества объектов
     save_as = True
-    # Поля которые можно редактировать в админке
     list_editable = ("draft",)
     # Подключение CKEditor
     form = MovieAdminForm

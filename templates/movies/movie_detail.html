@@ -1,6 +1,7 @@
 {% extends 'movies/base.html' %}
 {# Подключение мультиязычности #}
 {% load static i18n %}
+{% load custom_filters %}
 {# Подключение капчи #}
 {% load recaptcha3 %}
 {% block title %}{{ movie.title }}{% endblock title %}
@@ -176,6 +177,7 @@
             </span>{% trans 'Оставить отзыв' %}
           </h3>
 
+        {% if request.user.is_authenticated %}
           {# Форма добавления отзыва #}
           <form action="{% url 'add_review' movie.id %}"
                 method="post"
@@ -188,7 +190,7 @@
               <label for="contactcomment" class="editContent">
                 Ваш комментарий *
               </label>
-              {{ form.text }}
+              {{ form.text|attr:"id:contactcomment"}}
                {# Для работы рекаптчи. form получен из get_context_data #}
             </div>
             <div class="d-sm-flex">
@@ -212,6 +214,10 @@
               Отправить
             </button>
           </form>
+          {% else %}
+            <h3 style="margin-top: 10px">Войдите для того, чтобы оставить отзыв</h3>
+          {% endif %}
+
         </div>
         <!--  //contact form grid ends here -->
       </div>
@@ -250,6 +256,7 @@
   </div>
   <script>
       function addReview(name, id) {
+        console.log(name, id)
           document.getElementById("contactparent").value = id;
           document.getElementById("contactcomment").innerText = `${name}, `
       }

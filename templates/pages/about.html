@@ -11,35 +11,36 @@
 {% endblock content %}
 
 
-{% comment %} Простая страница. Настройка идет через settings.py {% endcomment %}
 
-{% comment %}
-settings.py
+{# Простая страница. Настройка идет через settings.py #}
 
-Installed apps
+{% comment %} settings.py
+Installed apps = [
+    ...
     'django.contrib.sites',
     'django.contrib.flatpages',
+]
 
 MIDDLEWARE = [
+    ...
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
 ]
 
 SITE_ID = 1
 {% endcomment %}
 
-{% comment %}
-urls.py
+{% comment %} urls.py
 
 urlpatterns = [
+    ...
     path('pages/', include('django.contrib.flatpages.urls')),
 ]
+{% endcomment %}
 
-____
-На сайте Админки |
+{% comment %} Админка
 
-Простые страницы/
-URL - название html файла
-Имя шаблона - Создаем директорию в templates pages и указываем название html файла
-pages/about.html
-
+В URL указать адрес для страницы
+В сайтах по умолчанию localhost:8000
+В расширенных настройках нужно указать папку в templates и файл
+Пример: pages/about.html
 {% endcomment %}

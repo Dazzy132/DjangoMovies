@@ -21,7 +21,12 @@ class GenreYear:
     def get_years(self):
         """Получение всех фильмов, у которых draft=False и забираем значение
         только года этих фильмов"""
-        return Movie.objects.filter(draft=False).values("year")
+        return (
+            Movie.objects
+            .filter(draft=False)
+            .values("year")
+            .order_by("year")
+        )
 
 
 class MoviesView(GenreYear, ListView):
@@ -29,9 +34,6 @@ class MoviesView(GenreYear, ListView):
     model = Movie
     queryset = Movie.objects.filter(draft=False)
     template_name = "movies/movie_list.html"
-    # template_name можно не указывать если писать шаблоны
-    # (Название модели_list) или detail. Зависит от класса
-
     # context_object_name не указывается, потому что обращение в шаблонах идет
     # непосредственно к имени модели - movie (movie_list).
     paginate_by = 6
@@ -40,9 +42,8 @@ class MoviesView(GenreYear, ListView):
 class MovieDetailView(GenreYear, DetailView):
     """Полное описание фильма"""
     model = Movie
-    slug_field = "url"
     # slug_field - Поле по которому нужно будет искать запись,
-    # "url" - поле в модели Movie
+    slug_field = "url"  # "url" - поле в модели Movie
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -56,7 +57,6 @@ class MovieDetailView(GenreYear, DetailView):
         """Получить звезды пользователя"""
         if Rating.objects.filter(ip=ip, movie_id=movie_id).exists():
             stars = Rating.objects.get(ip=ip, movie_id=movie_id).star
-            # .star - обращение к RatingStar, так как это поле - ForeignKey
         else:
             stars = None
         return stars
@@ -130,6 +130,20 @@ class FilterMoviesView(GenreYear, ListView):
     #         )
     #     return queryset
 
+    # def get_queryset(self):
+    #     queryset = Movie.objects.filter(
+    #         Q(year__in=self.request.GET.getlist('year')) |
+    #         Q(genres__in=self.request.GET.getlist('genre'))
+    #     )
+    #     # C помощью метода Q можно будет запрашивать
+    #     # или года или жанры. (ИЛИ - | )
+    #     return queryset
+    #
+    #     queryset = Movie.objects.filter(
+    #         year__in=self.request.GET.getlist('year'),
+    #         genres__in=self.request.GET.getlist('genre')
+    #     )
+
     def get_context_data(self, *args, **kwargs):
         """Формирование строки из элементов списка, объединяя их с помощью
         метода join. Запрос с фильтрацией в HTML выглядит так:
@@ -160,12 +174,10 @@ class AddStarRating(View):
     def post(self, request):
         form = RatingForm(request.POST)
         if form.is_valid():
+            # update_or_create - Позволяет обновить или создать запись
             Rating.objects.update_or_create(
-                # update_or_create - Позволяет обновить или создать запись
                 ip=self.get_client_ip(request),
                 movie_id=int(request.POST.get("movie")),
-                # movie_id = Строковое значение, полученное из запроса.
-                # Оборачиваем в int(). Данные приходят со скрытого поля movie
                 defaults={'star_id': int(request.POST.get("star"))}
                 # В defaults передается словарь
                 # {'ключ изменяемого поля': значение, на которое меняем
@@ -176,21 +188,6 @@ class AddStarRating(View):
             return HttpResponse(status=201)
         else:
             return HttpResponse(status=400)
-
-    # def get_queryset(self):
-    #     queryset = Movie.objects.filter(
-    #         Q(year__in=self.request.GET.getlist('year')) |
-    #         Q(genres__in=self.request.GET.getlist('genre'))
-    #     )
-    #     # C помощью метода Q можно будет запрашивать
-    #     # или года или жанры. (ИЛИ - | )
-    #     return queryset
-    #
-    #     queryset = Movie.objects.filter(
-    #         year__in=self.request.GET.getlist('year'),
-    #         genres__in=self.request.GET.getlist('genre')
-    #     )
-    #     Чтобы совпадал и год и жанр
 
 
 class Search(ListView):

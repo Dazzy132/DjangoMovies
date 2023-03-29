@@ -1,20 +1,26 @@
 {% extends 'base.html' %}
+{% comment %} Этот файл наследует главный шаблон страницы{% endcomment %}
 {% block title %} {% endblock title %}
+
 {% block content %}
-  <section class="ab-info-main py-md-5 py-4 editContent" style="padding-left: 3rem; padding-right: 3rem;">
-{% block container %}
-<div class="container py-md-3">
-{% endblock container %}
+<section
+  class="ab-info-main py-md-5 py-4 editContent"
+  style="padding-left: 3rem; padding-right: 3rem;">
 
-<div class="row">
-{% block sidebar %}<div class="side-bar col-lg-3">{% endblock sidebar %}{% include 'include/_sidebar.html' %}</div>
+  {% block container %}
+  <div class="container py-md-3">
+  {% endblock container %}
 
-{% comment %} Информация о фильме для movie_detail {% endcomment %}
-{% block movie %}
-{% endblock movie %}
-</div>
-</div>
+    <div class="row">
+      {% block sidebar %}
+      <div class="side-bar col-lg-3">
+      {% endblock sidebar %}
+      {% include 'include/_sidebar.html' %}
+      </div>
+
+    {% comment %} Информация о фильме для movie_detail {% endcomment %}
+      {% block movie %}{% endblock movie %}
+    </div>
+  </div>
 </section>
 {% endblock content %}
-
-{% comment %} Этот файл наследует главный   шаблон страницы{% endcomment %}

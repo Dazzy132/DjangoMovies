@@ -33,8 +33,9 @@ class MovieShotsTranslationOptions(TranslationOptions):
 
 # -------------------------------- Инструкция --------------------------------
 # settings.py
+#
+# pip install django-modeltranslation
 # INSTALLED_APPS = [
-#    pip install django-modeltranslation
 #    'modeltranslation',
 # ]
 

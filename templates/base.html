@@ -1,19 +1,28 @@
 <!DOCTYPE html>
-{% load static recaptcha3 %}
 {# Загружать статику и рекаптчу 3#}
+{% load static recaptcha3 %}
+
 <html lang="ru">
 <head>
-    <title>{% block title %} {% endblock %}</title>
+    <title>
+      {% block title %} {% endblock %}
+    </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" media="all">
     <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet">
-    <link href="//fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700" rel="stylesheet">
-    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
+    <link
+      href="//fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700"
+      rel="stylesheet">
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900"
+      rel="stylesheet">
 
+    {# Для работы ReCaptcha #}
       {% recaptcha_init %}
       {% recaptcha_ready action_name='homepage' %}
+    {# Для работы ReCaptcha #}
 
 </head>
 <body>
@@ -27,18 +36,14 @@
 {% comment %} Маленькая сноска с перебросом на страницы {% endcomment %}
     <ol class="breadcrumb editContent">
         <li class="breadcrumb-item">
-            <a href="{% url 'home' %}" class="editContent">Home</a>
+            <a href="{% url 'home' %}" class="editContent">Главная страница</a>
         </li>
-        <li class="breadcrumb-item active editContent">Single Page</li>
     </ol>
 
-    {% block content %}
-
-    {% endblock content %}
+    {% block content %} {% endblock content %}
     {% include 'include/_footer.html' %}
 </div>
+
 <script src="{% static 'js/scripts.js' %}"></script>
 </body>
 </html>
-
-{% comment %} Этот файл отвечает за общий шаблон страницы в котором загружена статика, хедер и футер {% endcomment %}

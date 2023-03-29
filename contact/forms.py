@@ -1,6 +1,5 @@
 from django import forms  # Для работы с формами
-from snowpenguin.django.recaptcha3.fields import \
-    ReCaptchaField  # Импорт каптчи
+# from snowpenguin.django.recaptcha3.fields import ReCaptchaField
 
 from .models import Contact
 
@@ -15,7 +14,7 @@ class ContactForm(forms.ModelForm):
         widgets = {
             "email": forms.TextInput(
                 attrs={"class": "editContent",
-                       'placeholder': "Your Email..."})
+                       'placeholder': "Введите почту..."})
         }
         labels = {'email': ''}
 

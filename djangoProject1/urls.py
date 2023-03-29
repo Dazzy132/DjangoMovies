@@ -12,12 +12,11 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 ]
 
+# Эндпоинты для которых нужна мультиязычность
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
-    # Авторизация и регистрация
-    path('accounts/', include('allauth.urls')),
-    # Простые страницы
-    path('pages/', include('django.contrib.flatpages.urls')),
+    path('accounts/', include('allauth.urls')),  # Авторизация и регистрация
+    path('pages/', include('django.contrib.flatpages.urls')),  # FlatPages
     path('contact/', include("contact.urls")),
     path("", include("movies.urls")),
 )
