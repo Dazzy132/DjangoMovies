@@ -235,6 +235,6 @@ RECAPTCHA_SCORE_THRESHOLD = 0.5
 # ---------- Каптча -----------
 
 # Для работы авторизации + простых страниц
-SITE_ID = 3  # Todo: Change 1
+SITE_ID = 1
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
