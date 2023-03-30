@@ -40,3 +40,37 @@ DB_ENGINE=django.db.backends.sqlite3
 ALLOWED_HOSTS=localhost,127.0.0.1,your-server-example.com
 ```
 
+-------------------
+
+# Как запустить проект
+
+1) Клонировать репозиторий
+```shell
+git clone git@github.com:Dazzy132/DjangoMovies.git
+```
+
+2) Создать и активировать виртуальное окружение
+```shell
+python -m venv venv
+
+source venv/Scripts/activate (Для Windows)
+source venv/bin/activate (Для Linux и MacOS)
+```
+3)  Установить зависимости
+```shell
+pip install -r requirements.txt
+```
+4) Выполнить миграции
+```shell
+python manage.py makemigrations
+python manage.py migrate
+```
+5) Создать суперпользователя (Рекомендуется)
+```shell
+python manage.py createsuperuser --username=root --email=root@mail.ru
+```
+
+6) Запустить сервер
+```shell
+python manage.py runserver
+```
