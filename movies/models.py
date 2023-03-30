@@ -60,14 +60,11 @@ class Movie(models.Model):
         max_length=100, verbose_name='Слоган', default=''
     )
     description = models.TextField(verbose_name='Описание')
-    # Фотографии | upload_to - в какую папку загружать
     poster = models.ImageField(upload_to='poster/', verbose_name='Постер')
-    # PositiveSmall - нельзя поставить большую дату и меньше 0
     year = models.PositiveSmallIntegerField(
         default='2022', verbose_name='Дата выхода'
     )
     country = models.CharField(max_length=150, verbose_name='Страна')
-    # Многие ко многим. У Фильма может быть несколько директоров
     directors = models.ManyToManyField(
         Actor, verbose_name='Режиссеры', related_name='film_director'
     )
@@ -75,13 +72,9 @@ class Movie(models.Model):
         Actor, verbose_name='Актеры', related_name='film_actor'
     )
     genres = models.ManyToManyField(Genre, verbose_name='Жанры')
-    # Мировая премьера. По умолчанию ставится сегодняшний день
-    # from datetime import date
     world_premiere = models.DateField(
         default=date.today, verbose_name='Премьера в мире'
     )
-    # Бюджет. По умолчанию 0. Бюджет не может быть меньше 0 благодаря
-    # PositiveIntegerField, help_text - отображение подсказки в админке
     budget = models.PositiveIntegerField(
         default=0, help_text='Указывать сумму в $', verbose_name='Бюджет'
     )
@@ -91,9 +84,6 @@ class Movie(models.Model):
     fees_in_world = models.PositiveIntegerField(
         default=0, help_text='Указывать сумму в $', verbose_name='Сборы в мире'
     )
-    # При удалении категории, у всех фильмов будет значение Null,
-    # и они не удалятся - models.SET_NULL, null=True,
-    # фильм может не иметь категорию
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL, null=True, verbose_name='Категория'
@@ -145,13 +135,11 @@ class RatingStar(models.Model):
     )
 
     def __str__(self):
-        # Чтобы добавлять звезды рейтинга, нужно передать её как строку
         return f'{self.value}'
 
     class Meta:
         verbose_name = 'Звезда рейтинга'
         verbose_name_plural = 'Звезды рейтинга'
-        # Отображение звезд в нужном порядке
         ordering = ('value',)
 
 
